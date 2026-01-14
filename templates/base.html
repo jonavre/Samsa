@@ -25,6 +25,7 @@ header {
     margin-bottom:20px;
     box-shadow:0 2px 4px rgba(0,0,0,0.1);
     color:white;
+    flex-wrap:wrap; /* <- evita rompimiento */
 }
 
 /* LOGO */
@@ -49,6 +50,7 @@ header {
 .titulo {
     flex:1;
     padding-left:20px;
+    min-width:200px;
 }
 
 /* MENU + LOGOUT */
@@ -56,12 +58,14 @@ header {
     display:flex;
     align-items:center;
     gap:25px;
+    flex-wrap:wrap;
 }
 
 nav {
     display:flex;
     gap:20px;
     font-size:20px;
+    flex-wrap:wrap;
 }
 
 nav a {
@@ -69,10 +73,7 @@ nav a {
     text-decoration:none;
     font-weight:500;
 }
-
-nav a:hover {
-    text-decoration:underline;
-}
+nav a:hover { text-decoration:underline; }
 
 .logout {
     background:#c62828;
@@ -83,25 +84,44 @@ nav a:hover {
     text-decoration:none;
     white-space:nowrap;
 }
+.logout:hover { background:#b71c1c; }
 
-.logout:hover {
-    background:#b71c1c;
-}
+/* ===== RESPONSIVE ===== */
+@media (max-width: 600px) {
+    header {
+        flex-direction:column;
+        text-align:center;
+        gap:15px;
+        padding:15px;
+    }
 
-/* BOTON SUBIR PROGRAMACIÓN */
-.subir-programacion {
-    background:#ffa000;
-    color:white;
-    padding:8px 14px;
-    border-radius:6px;
-    font-weight:bold;
-    text-decoration:none;
-}
+    .logo {
+        width:80px;
+        height:80px;
+    }
+    .logo img {
+        width:60px;
+        height:60px;
+    }
 
-.subir-programacion:hover {
-    background:#ff8f00;
+    nav {
+        font-size:16px;
+        justify-content:center;
+    }
+
+    .menu-derecha {
+        flex-direction:column;
+        gap:10px;
+    }
+
+    .logout {
+        width:100%;
+        max-width:220px;
+        text-align:center;
+    }
 }
 </style>
+
 </head>
 
 <body>
