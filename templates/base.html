@@ -11,7 +11,7 @@ body {
     margin: 0;
     font-family: Arial, sans-serif;
     background:#f2f4f7;
-    padding:20px;
+    padding:0;
 }
 
 /* ===== HEADER ===== */
@@ -21,11 +21,12 @@ header {
     justify-content:space-between;
     background:#0057b7;
     padding:15px 25px;
-    border-radius:10px;
+    border-radius:0 0 10px 10px;
     margin-bottom:20px;
     box-shadow:0 2px 4px rgba(0,0,0,0.1);
     color:white;
-    flex-wrap:wrap; /* <- evita rompimiento */
+    flex-wrap:wrap; 
+    min-height:120px; /* altura consistente */
 }
 
 /* LOGO */
@@ -51,6 +52,15 @@ header {
     flex:1;
     padding-left:20px;
     min-width:200px;
+    text-align:center; /* centra texto */
+}
+.titulo h2 {
+    margin:0;
+    font-size:30px;
+}
+.titulo div {
+    font-size:18px;
+    margin-top:5px;
 }
 
 /* MENU + LOGOUT */
@@ -85,6 +95,56 @@ nav a:hover { text-decoration:underline; }
     white-space:nowrap;
 }
 .logout:hover { background:#b71c1c; }
+
+/* CONTENEDOR PRINCIPAL */
+.container {
+    max-width: 900px;
+    margin: 20px auto;
+    background: white;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* BOTONES */
+button {
+    padding: 10px 16px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    background: #0057b7;
+    color: white;
+    transition: 0.2s;
+}
+button:hover { background: #003f87; }
+
+/* TABLAS */
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+th, td {
+    padding: 10px;
+    text-align: left;
+}
+th {
+    background: #0057b7;
+    color: white;
+}
+tr:nth-child(even) { background: #eaf3ff; }
+tr:nth-child(odd) { background: white; }
+tr:hover { background: #cfe0ff; cursor: pointer; }
+
+/* BADGES */
+.badge {
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: bold;
+}
+.afalpi { background:#e3f2fd; color:#0d47a1; }
+.inventario { background:#e8f5e9; color:#1b5e20; }
 
 /* ===== RESPONSIVE ===== */
 @media (max-width: 600px) {
@@ -122,23 +182,21 @@ nav a:hover { text-decoration:underline; }
 }
 </style>
 
+{% block head %}{% endblock %}
 </head>
 
 <body>
 
 <header>
-
     <!-- LOGO -->
     <div class="logo">
-        <img src="https://i.ibb.co/6JFhGVXn/Logo.png" alt="Logo" style="width:90px; height:90px; object-fit:contain;">
+        <img src="https://i.ibb.co/6JFhGVXn/Logo.png" alt="Logo">
     </div>
 
     <!-- TITULO -->
     <div class="titulo">
-        <h2 style="margin:0; font-size:30px;">Sistema SAMSA</h2>
-        <div style="font-size:18px;">
-            {% block subtitulo %}{% endblock %}
-        </div>
+        <h2>Sistema SAMSA</h2>
+        <div>{% block subtitulo %}{% endblock %}</div>
     </div>
 
     <!-- MENÚ -->
@@ -149,16 +207,16 @@ nav a:hover { text-decoration:underline; }
             <a href="/pedidos">Pedidos</a>
             <a href="/solicitudes">Solicitudes</a>
             <a href="/subir_programacion">Subir Programación</a>
-            
         </nav>
 
         <a href="/logout" class="logout">⛔ Cerrar sesión</a>
     </div>
-
 </header>
 
-<!-- CONTENIDO -->
-{% block content %}{% endblock %}
+<div class="container">
+    {% block content %}{% endblock %}
+</div>
 
+{% block scripts %}{% endblock %}
 </body>
 </html>
