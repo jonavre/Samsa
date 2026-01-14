@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block subtitulo %}Subir Programación Semanal{% endblock %}
+
+{% block content %}
+<div class="box">
+    <h3>📤 Subir Programación Semanal</h3>
+    <form method="POST" enctype="multipart/form-data">
+        <input type="file" name="archivo" accept="image/*" required>
+        <br><br>
+        <button type="submit">Subir</button>
+    </form>
+</div>
+{% endblock %}

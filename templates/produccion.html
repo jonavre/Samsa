@@ -1,0 +1,214 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<h2>Registro de Producción</h2>
+
+<form id="formProduccion" style="max-width:900px; margin:auto;">
+
+<div class="grid">
+
+<div>
+<label>Producto</label>
+<input id="producto" required>
+</div>
+
+<div>
+<label>Código Producto</label>
+<input id="codigo_producto" required>
+</div>
+
+<div>
+<label>Fecha de Producción</label>
+<input type="date" id="fecha" required>
+</div>
+
+<div>
+<label>Tanda</label>
+<input type="number" id="tanda" min="1" required>
+</div>
+
+<div>
+<label>Cantidad Producida</label>
+<input type="number" id="cantidad" step="0.01" required>
+</div>
+
+<div>
+<label>Kilos Totales</label>
+<input id="kilos_totales" readonly>
+</div>
+
+<div>
+<label>pH</label>
+<input type="number" id="ph" step="0.01">
+</div>
+
+<div>
+<label>Brix</label>
+<input type="number" id="brix" step="0.01">
+</div>
+
+<div>
+<label>Azúcar (kg)</label>
+<input type="number" id="azucar_kg" step="0.01">
+</div>
+
+<textarea id="observaciones" placeholder="Observaciones..."></textarea>
+
+</div>
+
+<button type="submit">Guardar Producción</button>
+<div class="info" id="info"></div>
+
+<hr>
+<h3>Consultas</h3>
+
+<div class="grid">
+<div>
+<label>Fecha calendario</label>
+<input type="date" id="fecha_cal">
+</div>
+
+<div>
+<label>Código día</label>
+<input id="codigo_dia" readonly>
+</div>
+
+<div>
+<label>Productos</label>
+<button type="button" onclick="abrirModal()">Buscar</button>
+</div>
+</div>
+
+</form>
+
+<!-- MODAL -->
+<div id="modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.4);">
+  <div style="background:white; margin:5% auto; padding:20px; width:80%; max-height:75%; overflow:auto;">
+    <h3>Productos</h3>
+    <button onclick="cargar('PT')">Pulpa</button>
+    <button onclick="cargar('PP')">Puré</button>
+    <button style="float:right;" onclick="cerrar()">Cerrar</button>
+
+    <table width="100%" border="1" style="margin-top:10px;">
+      <thead><tr><th>Código</th><th>Descripción</th></tr></thead>
+      <tbody id="tabla"></tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+
+/* ===============================
+   TOAST MESSAGE
+================================*/
+const toast = (() => {
+  const div = document.createElement("div");
+  div.style.position = "fixed";
+  div.style.bottom = "25px";
+  div.style.right = "25px";
+  div.style.background = "#222";
+  div.style.color = "#fff";
+  div.style.padding = "12px 18px";
+  div.style.borderRadius = "6px";
+  div.style.fontSize = "15px";
+  div.style.opacity = "0";
+  div.style.transition = "opacity .3s, transform .3s";
+  div.style.transform = "translateY(20px)";
+  div.style.zIndex = "9999";
+  document.body.appendChild(div);
+
+  return (msj, dur=3000) => {
+    div.innerText = msj;
+    div.style.opacity = "1";
+    div.style.transform = "translateY(0)";
+    setTimeout(()=>{
+      div.style.opacity = "0";
+      div.style.transform = "translateY(20px)";
+    }, dur);
+  };
+})();
+
+/* ===============================
+   CALENDARIO BD
+================================*/
+fecha_cal.onchange = () => {
+  fetch('/api/calendario/' + fecha_cal.value)
+    .then(r => r.json())
+    .then(d => codigo_dia.value = d.codigo_dia || 'No existe')
+    .catch(() => codigo_dia.value = 'No existe');
+};
+
+
+/* ===============================
+   MODAL PRODUCTOS
+================================*/
+function abrirModal(){ modal.style.display='block'; cargar('PT'); }
+function cerrar(){ modal.style.display='none'; }
+
+function cargar(tipo){
+  fetch('/api/productos?tipo=' + tipo)
+    .then(r => r.json())
+    .then(data => {
+      tabla.innerHTML = '';
+      data.forEach(p => {
+        tabla.innerHTML += `<tr onclick="sel('${p.codigo}','${p.descripcion}')">
+          <td>${p.codigo}</td><td>${p.descripcion}</td></tr>`;
+      });
+    });
+}
+
+function sel(c,d){
+  codigo_producto.value = c;
+  producto.value = d;
+  cerrar();
+}
+
+
+/* ===============================
+   REGISTRAR PRODUCCIÓN
+================================*/
+formProduccion.onsubmit = (e) => {
+  e.preventDefault();
+
+  const data = {
+    codigo_producto: codigo_producto.value,
+    fecha: fecha.value,
+    tanda: tanda.value,
+    proceso: "N/A",
+    presentacion: "N/A",
+    cantidad: cantidad.value,
+    unidad: "kg",
+    kilos_totales: cantidad.value,
+    ph: ph.value,
+    brix: brix.value,
+    azucar_kg: azucar_kg.value,
+    observaciones: observaciones.value
+  };
+
+  fetch('/api/produccion', {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify(data)
+  })
+  .then(r => r.json())
+  .then(d => {
+    if (d.error) {
+      toast("⚠ " + d.error, 4000);
+      return;
+    }
+
+    toast("✔ " + d.mensaje, 3000);
+    toast("📦 Lote generado: " + d.codigo_lote, 5000);
+
+    cantidad.value = "";
+    kilos_totales.value = "";
+    observaciones.value = "";
+    ph.value = "";
+    brix.value = "";
+    azucar_kg.value = "";
+  })
+  .catch(() => toast("⚠ Error de conexión con servidor", 4000));
+};
+</script>
+
+{% endblock %}

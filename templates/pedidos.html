@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block subtitulo %}Control de Producción{% endblock %}
+
+{% block content %}
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background:#f2f4f7;
+    padding:20px;
+}
+
+.container {
+    max-width:600px;
+    margin:auto;
+    background:white;
+    padding:30px;
+    border-radius:10px;
+    box-shadow:0 2px 4px rgba(0,0,0,0.1);
+    text-align:center;
+}
+
+h2 { margin-bottom:20px; }
+
+button {
+    padding:12px 25px;
+    margin:10px;
+    border:none;
+    border-radius:5px;
+    cursor:pointer;
+    font-size:18px;
+    background:#0057b7;
+    color:white;
+}
+button:hover { background:#003f87; }
+
+header a {
+    color:white;
+    text-decoration:none;
+    font-size:18px;
+}
+</style>
+
+
+<!-- CONTENIDO -->
+<div class="container">
+    <h2>Seleccione tipo de pedido</h2>
+
+    <button onclick="location.href='/afalpi'">📋 Pedido AFALPI</button>
+    <button onclick="location.href='/inventario'">📦 Inventario Procesos</button>
+</div>
+
+{% endblock %}

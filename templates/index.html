@@ -1,96 +1,154 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Inicio - Gustica</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
-</head>
-<body>
-   <header>
-    <div class="logo">
-        <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo" />
+{% extends "base.html" %}
+
+{% block subtitulo %}Control de Producción{% endblock %}
+
+{% block content %}
+
+<style>
+/* ===== ESTILOS ===== */
+body {
+    font-family: Arial, sans-serif;
+    background: #f2f4f7;
+    padding: 20px;
+}
+
+/* CAJA */
+.box {
+    max-width: 900px;
+    margin: auto;
+    background: white;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,.1);
+}
+
+button {
+    padding: 10px 16px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+/* TABLA */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+th {
+    background: #0057b7;
+    color: white;
+    padding: 10px;
+}
+td {
+    padding: 8px;
+}
+tr:nth-child(even){ background: #eaf3ff; }
+tr:nth-child(odd){ background: white; }
+tr:hover{ background: #cfe0ff; cursor: pointer; }
+</style>
+
+<!-- CONTENIDO PRINCIPAL -->
+<div class="box">
+    <h3>📅 Calendario juliano</h3>
+    <label>Fecha</label><br>
+    <input type="date" id="fecha_cal">
+    <input type="text" id="codigo_dia" readonly placeholder="Código del día">
+    <br><br>
+
+    <h3>📦 Productos</h3>
+    <button onclick="abrirProductos()">Ver productos</button>
+</div>
+
+<!-- MODAL PRODUCTOS -->
+<div id="modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.5);">
+  <div style="background:white; margin:4% auto; padding:20px; width:85%; max-height:85%; overflow:auto; border-radius:8px;">
+
+    <div style="display:flex; gap:8px; margin-bottom:10px;">
+      <button onclick="filtrar('ALL')">Todos</button>
+      <button onclick="filtrar('PT')">Pulpas</button>
+      <button onclick="filtrar('PP')">Pures</button>
+      <button onclick="ordenar()">ASC / DESC</button>
+      <button style="margin-left:auto;background:#444;color:white" onclick="cerrarProductos()">Cerrar</button>
     </div>
-    <nav>
-        <a href="{{ url_for('inicio') }}">Inicio</a>
-        <a href="{{ url_for('quienes') }}">Quiénes Somos</a>
-        <a href="{{ url_for('productos') }}">Productos</a>
-        <a href="{{ url_for('referencias') }}">Referencias</a>
-        <a href="{{ url_for('contacto') }}">Contacto</a>
-        <a href="{{ url_for('carrito') }}">🛒 Carrito</a>
-    </nav>
-</header>
 
-</nav>
+    <table>
+      <thead>
+        <tr>
+            <th>Código</th>
+            <th>Descripción</th>
+        </tr>
+      </thead>
+      <tbody id="tablaProductos"></tbody>
+    </table>
+  </div>
+</div>
 
+<!-- PROGRAMACIÓN SEMANAL -->
+{% if ultima_programacion_id %}
+    <div class="box" style="margin-top:20px;">
+        <h3>📋 Programación Semanal</h3>
+        <img src="{{ url_for('mostrar_programacion', id=ultima_programacion_id) }}" 
+             style="width:100%; border-radius:10px; box-shadow:0 2px 4px rgba(0,0,0,0.2);">
+    </div>
+{% else %}
+    <div class="box" style="margin-top:20px;">
+        <h3>📋 Programación Semanal</h3>
+        <p>No hay programación disponible.</p>
+    </div>
+{% endif %}
 
-</header>
+<script>
+let productos = [];
+let filtro = "ALL";
+let asc = true;
 
+/* ===== FUNCIONES PRODUCTOS ===== */
+function abrirProductos(){
+    modal.style.display="block";
+    cargarProductos();
+}
 
-    <main>
-        <!-- Carrusel de imágenes con fade y botones -->
-        <section class="carrusel-fade" style="margin-top: 20px;">
-            <div class="slider-container" style="max-width: 1200px; margin: 0 auto;">
-                <img src="{{ url_for('static', filename='foto1.jpg') }}" alt="Fruta 1" class="slider-img active">
-                <img src="{{ url_for('static', filename='foto2.jpg') }}" alt="Fruta 2" class="slider-img">
-                <img src="{{ url_for('static', filename='foto3.jpg') }}" alt="Fruta 3" class="slider-img">
-                <button class="prev">&#10094;</button>
-                <button class="next">&#10095;</button>
-            </div>
-        </section>
+function cerrarProductos(){
+    modal.style.display="none";
+}
 
-        <!-- Sección Por qué Gustica -->
-        <section class="por-que-gustica">
-            <h2>¿Por qué Gustica?</h2>
-            <div class="beneficios">
-                <div class="beneficio">
-                    <h3>Calidad</h3>
-                    <ul>
-                        <li>Fruta 100% natural sin ingredientes adicionales.</li>
-                        <li>Fruta mínimamente manipulada.</li>
-                        <li>Puré de frutas uniforme en sabor, color y textura.</li>
-                    </ul>
-                </div>
-                <div class="beneficio">
-                    <h3>Ganancias</h3>
-                    <ul>
-                        <li>Utilidad óptima por unidad.</li>
-                        <li>Cero desperdicio de fruta.</li>
-                        <li>Ahorro insuperable en hielo y mano de obra.</li>
-                        <li>Ágil monitoreo de inventario.</li>
-                    </ul>
-                </div>
-                <div class="beneficio">
-                    <h3>Inmediatez</h3>
-                    <ul>
-                        <li>Elimina cadena de abastecimiento (30 segundos para preparar).</li>
-                        <li>Variedad asegurada con disponibilidad.</li>
-                        <li>Uso de IA para proyección de consumo de producción.</li>
-                    </ul>
-                </div>
-            </div>
-        </section>
-    </main>
+async function cargarProductos(){
+    tablaProductos.innerHTML = "<tr><td colspan='2'>Cargando...</td></tr>";
+    const res = await fetch("/api/productos");
+    productos = await res.json();
+    renderProductos();
+}
 
-    {% include 'footer.html' %}
+function filtrar(t){
+    filtro = t;
+    renderProductos();
+}
 
-    <!-- JavaScript del carrusel con fade -->
-    <script>
-        let currentIndex = 0;
-        const images = document.querySelectorAll('.slider-img');
-        const total = images.length;
+function ordenar(){
+    asc = !asc;
+    renderProductos();
+}
 
-        document.querySelector('.next').addEventListener('click', () => {
-            images[currentIndex].classList.remove('active');
-            currentIndex = (currentIndex + 1) % total;
-            images[currentIndex].classList.add('active');
-        });
+function renderProductos(){
+    let data = [...productos];
+    if(filtro !== "ALL") data = data.filter(p => p.codigo.startsWith(filtro));
+    data.sort((a,b)=> asc ? a.codigo.localeCompare(b.codigo) : b.codigo.localeCompare(a.codigo));
+    tablaProductos.innerHTML = "";
+    data.forEach(p=>{
+        tablaProductos.innerHTML += `
+        <tr>
+            <td>${p.codigo}</td>
+            <td>${p.descripcion}</td>
+        </tr>`;
+    });
+}
 
-        document.querySelector('.prev').addEventListener('click', () => {
-            images[currentIndex].classList.remove('active');
-            currentIndex = (currentIndex - 1 + total) % total;
-            images[currentIndex].classList.add('active');
-        });
-    </script>
-</body>
-</html>
+/* ===== EVENTO CALENDARIO ===== */
+fecha_cal.addEventListener("change", async e=>{
+    const res = await fetch(`/api/calendario/${e.target.value}`);
+    const d = await res.json();
+    codigo_dia.value = d.codigo_dia || "No existe";
+});
+</script>
+
+{% endblock %}

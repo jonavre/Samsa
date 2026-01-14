@@ -1,0 +1,178 @@
+{% extends "base.html" %}
+
+{% block subtitulo %}Solicitudes{% endblock %}
+
+{% block content %}
+
+<style>
+.section {
+    background:white;
+    padding:20px;
+    border-radius:10px;
+    margin-bottom:30px;
+    box-shadow:0 2px 4px rgba(0,0,0,0.1);
+}
+
+.section h3 {
+    margin-top:0;
+    margin-bottom:15px;
+    color:#0057b7;
+}
+
+table {
+    width:100%;
+    border-collapse:collapse;
+}
+
+th, td {
+    padding:10px;
+    border-bottom:1px solid #ddd;
+    text-align:left;
+}
+
+th {
+    background:#f2f4f7;
+}
+
+tr:hover {
+    background:#f9f9f9;
+}
+
+.badge {
+    padding:4px 8px;
+    border-radius:6px;
+    font-size:12px;
+    font-weight:bold;
+}
+
+.afalpi {
+    background:#e3f2fd;
+    color:#0d47a1;
+}
+
+.inventario {
+    background:#e8f5e9;
+    color:#1b5e20;
+}
+
+.btn-ok {
+    background:#2e7d32;
+    color:white;
+    border:none;
+    padding:6px 10px;
+    border-radius:5px;
+    cursor:pointer;
+    font-size:16px;
+}
+
+.btn-ok:hover {
+    background:#1b5e20;
+}
+</style>
+
+<!-- ================= AFALPI ================= -->
+<div class="section">
+    <h3>📦 Solicitudes AFALPI</h3>
+
+    <table id="tablaAfalpi">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Comentario</th>
+                <th>Fecha</th>
+                <th>Enviada por</th>
+                <th>Acción</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>
+
+<!-- ================= INVENTARIO ================= -->
+<div class="section">
+    <h3>📋 Solicitudes Inventario</h3>
+
+    <table id="tablaInventario">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Producto</th>       <!-- ✅ agregado -->
+                <th>Cantidad</th>       <!-- ✅ agregado -->
+                <th>Unidad</th>         <!-- ✅ agregado -->
+                <th>Proveedor</th>      <!-- ✅ agregado -->
+                <th>Comentario</th>
+                <th>Fecha</th>
+                <th>Enviada por</th>
+                <th>Acción</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>
+
+
+<script>
+/* ================= AFALPI ================= */
+fetch("/api/afalpi")
+.then(res => res.json())
+.then(data => {
+    const tbody = document.querySelector("#tablaAfalpi tbody");
+    tbody.innerHTML = "";
+
+    data.forEach(r => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+            <td>${r.id}</td>
+            <td>${r.comentario}</td>
+            <td>${new Date(r.fecha).toLocaleString()}</td>
+            <td><span class="badge afalpi">${r.enviado_por}</span></td>
+            <td>
+                <button class="btn-ok" onclick="confirmarAfalpi(${r.id})">✔</button>
+            </td>
+        `;
+        tbody.appendChild(tr);
+    });
+});
+
+/* ================= INVENTARIO ================= */
+fetch("/api/inventario")
+.then(res => res.json())
+.then(data => {
+    const tbody = document.querySelector("#tablaInventario tbody");
+    tbody.innerHTML = "";
+
+    data.forEach(r => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+            <td>${r.id}</td>
+            <td>${r.producto}</td>           <!-- ✅ Producto -->
+            <td>${r.cantidad}</td>           <!-- ✅ Cantidad -->
+            <td>${r.unidad}</td>             <!-- ✅ Unidad -->
+            <td>${r.proveedor}</td>          <!-- ✅ Proveedor -->
+            <td>${r.comentario || ""}</td>   <!-- Comentario -->
+            <td>${new Date(r.fecha).toLocaleString()}</td>
+            <td><span class="badge inventario">${r.enviado_por}</span></td>
+            <td>
+                <button class="btn-ok" onclick="confirmarInventario(${r.id})">✔</button>
+            </td>
+        `;
+        tbody.appendChild(tr);
+    });
+});
+
+
+/* ================= CONFIRMAR ================= */
+function confirmarAfalpi(id) {
+    if (!confirm("¿Marcar solicitud AFALPI como atendida?")) return;
+    fetch(`/api/afalpi/${id}`, { method: "DELETE" })
+    .then(() => location.reload());
+}
+
+function confirmarInventario(id) {
+    if (!confirm("¿Marcar solicitud Inventario como atendida?")) return;
+    fetch(`/api/inventario/${id}`, { method: "DELETE" })
+    .then(() => location.reload());
+}
+</script>
+
+{% endblock %}

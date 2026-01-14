@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+
+{% block subtitulo %}Pedidos de Inventario{% endblock %}
+
+{% block content %}
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/handsontable@14.3.0/dist/handsontable.full.min.css">
+<script src="https://cdn.jsdelivr.net/npm/handsontable@14.3.0/dist/handsontable.full.min.js"></script>
+
+<style>
+button {
+    padding: 8px 15px;
+    border: none;
+    background: #0057b7;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+button:hover {
+    background: #003f87;
+}
+#aexcel {
+    width: 100%;
+    height: 650px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+.controles {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+</style>
+
+<h2 style="text-align:center; margin-bottom:20px;">
+📝 Formulario de Pedidos de Inventario
+</h2>
+
+<div id="aexcel"></div>
+
+<div class="controles">
+    <button onclick="sendPedido()">📤 Enviar Pedido</button>
+</div>
+
+<script>
+let hot;
+
+/* ================= DATOS BASE ================= */
+const DATA_BASE = [
+  { producto:"Acesulfame potasio", unidad:"Kg", proveedor:"IQS" },
+  { producto:"Acido ascorbico", unidad:"Kg", proveedor:"Beyco" },
+  { producto:"Acido citrico", unidad:"Kg", proveedor:"MAVIDER" },
+  { producto:"Antiespumante", unidad:"Galones", proveedor:"IQS" },
+  { producto:"Antioxidante especial", unidad:"Kg", proveedor:"IQS" },
+  { producto:"Base fruit punch (FP)", unidad:"Kg", proveedor:"Alconum" },
+  { producto:"Base kiwi", unidad:"Kg", proveedor:"Alconum" },
+  { producto:"Base mora", unidad:"Kg", proveedor:"Alconum" },
+  { producto:"Base Tamarindo", unidad:"Kg", proveedor:"Alconum" },
+  { producto:"Benzoato de sodio", unidad:"Kg", proveedor:"MAVIDER" },
+  { producto:"Cmc", unidad:"Kg", proveedor:"IQS" },
+  { producto:"Coco colada", unidad:"Kg", proveedor:"Alconum" },
+  { producto:"Colorante amarillo 5", unidad:"Galon", proveedor:"MALUQUER" },
+  { producto:"Colorante rojo 40", unidad:"Galon", proveedor:"MALUQUER" },
+  { producto:"Colorante verde CL434", unidad:"Galon", proveedor:"MALUQUER" },
+  { producto:"Dioxido de titanio", unidad:"Kg", proveedor:"IQS" },
+  { producto:"Estabilizador", unidad:"Kg", proveedor:"IQS" },
+  { producto:"Goma xanthan", unidad:"Kg", proveedor:"IQS" },
+  { producto:"Pirofosfato de sodio", unidad:"Kg", proveedor:"Beyco" },
+
+  { producto:"Saborizante banano", unidad:"Kg", proveedor:"ASTEK" },
+  { producto:"Saborizante carambola", unidad:"Kg", proveedor:"Alconum" },
+  { producto:"Saborizante cas", unidad:"Kg", proveedor:"Alconum" },
+  { producto:"Saborizante coco", unidad:"Kg", proveedor:"Alconum" },
+  { producto:"Saborizante fresa", unidad:"Kg", proveedor:"Alconum" },
+  { producto:"Saborizante fresa en polvo B14364", unidad:"Kg", proveedor:"ASTEK" },
+  { producto:"Saborizante fresa en polvo max", unidad:"Kg", proveedor:"JOEL UROBA" },
+  { producto:"Saborizante guanabana", unidad:"Kg", proveedor:"Alconum" },
+  { producto:"Saborizante guayaba", unidad:"Kg", proveedor:"MALUQUER" },
+  { producto:"Saborizante Kola", unidad:"Galones", proveedor:"Master pac" },
+  { producto:"Saborizante mandarina", unidad:"Kg", proveedor:"ASTEK" },
+  { producto:"Saborizante mango", unidad:"Kg", proveedor:"Alconum" },
+  { producto:"Saborizante maracuya", unidad:"Kg", proveedor:"Alconum" },
+  { producto:"Saborizante naranja", unidad:"Kg", proveedor:"ASTEK" },
+  { producto:"Saborizante naranjilla", unidad:"Kg", proveedor:"Alconum" },
+  { producto:"Saborizante piña", unidad:"Kg", proveedor:"Alconum" },
+  { producto:"Saborizante Top naranja", unidad:"Kg", proveedor:"Alconum" },
+  { producto:"Saborizante tutifruti", unidad:"Kg", proveedor:"ASTEK" },
+
+  { producto:"Sorbato de potasio", unidad:"Kg", proveedor:"MAVIDER" },
+  { producto:"Sucralosa", unidad:"Kg", proveedor:"MAVIDER" },
+  { producto:"Zumo maracuya", unidad:"Kg", proveedor:"SAMSA" },
+  { producto:"Citrato de sodio", unidad:"Kg", proveedor:"IQS" },
+  { producto:"Saborizante de zanahoria", unidad:"Kg", proveedor:"Callizo" },
+  { producto:"Canela", unidad:"Kg", proveedor:"DEL CARIBE" },
+  { producto:"Saborizante natural de fresa", unidad:"Kg", proveedor:"MALUQUER" },
+  { producto:"Harina de arroz", unidad:"Kg", proveedor:"MOLINOS DE GUADALUPE" },
+  { producto:"Saborizante frutos rojos", unidad:"Kg", proveedor:"Alconum" }
+].map(r => ({ ...r, cantidad:"", comentario:"" }));
+
+/* ================= TABLA ================= */
+hot = new Handsontable(document.getElementById("aexcel"), {
+  data: DATA_BASE,
+  colHeaders: ["Producto", "Cantidad", "Unidad", "Proveedor", "Comentario"],
+  columns: [
+    { data:"producto", readOnly:true },
+    { data:"cantidad", type:"text" },
+    { data:"unidad", readOnly:true },
+    { data:"proveedor", readOnly:true },
+    { data:"comentario", type:"text" }
+  ],
+  rowHeaders: true,
+  stretchH: "all",
+  height: 650,
+  licenseKey: "non-commercial-and-evaluation"
+});
+
+/* ================= ENVIAR ================= */
+async function sendPedido() {
+  const data = hot.getSourceData();
+  const payload = data.filter(r => r.cantidad && r.cantidad !== "");
+
+  if (payload.length === 0) {
+    alert("⚠️ No hay productos con cantidad ingresada");
+    return;
+  }
+
+  const res = await fetch("/api/inventario", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload)
+  });
+
+  if (res.ok) {
+    alert("✅ Pedido enviado correctamente");
+    hot.loadData(DATA_BASE);
+  } else {
+    alert("❌ Error al enviar el pedido");
+  }
+}
+</script>
+
+{% endblock %}

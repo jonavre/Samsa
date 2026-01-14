@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>SAMSA</title>
+<style>
+  body { font-family: Arial; margin:0; background:#f6f6f6; }
+  header {
+    background:#fcfcfc;
+    padding:12px;
+    color:white;
+    font-size:18px;
+  }
+  nav a {
+    color:white;
+    margin-right:18px;
+    text-decoration:none;
+    font-size:16px;
+  }
+  nav a:hover {
+    text-decoration:underline;
+  }
+  main {
+    padding:20px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <nav>
+    <a href="/">Inicio</a>
+    <a href="/produccion">Producción</a>
+    <a href="/producciones">Producciones</a>
+    <a href="/lotes">Lotes</a>
+    <a href="/reportes">Reportes</a>
+    <a href="/config">Config</a>
+  </nav>
+</header>
+
+<main>
+  {% block content %}{% endblock %}
+</main>
+
+</body>
+</html>

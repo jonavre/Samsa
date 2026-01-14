@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>SAMSA</title>
+
+<style>
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background:#f2f4f7;
+    padding:20px;
+}
+
+/* ===== HEADER ===== */
+header {
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    background:#0057b7;
+    padding:15px 25px;
+    border-radius:10px;
+    margin-bottom:20px;
+    box-shadow:0 2px 4px rgba(0,0,0,0.1);
+    color:white;
+}
+
+/* LOGO */
+.logo {
+    width:120px;
+    height:120px;
+    border-radius:50%;
+    background:white;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    overflow:hidden;
+    flex-shrink:0;
+}
+.logo img {
+    width:90px;
+    height:90px;
+    object-fit:contain;
+}
+
+/* TITULO */
+.titulo {
+    flex:1;
+    padding-left:20px;
+}
+
+/* MENU + LOGOUT */
+.menu-derecha {
+    display:flex;
+    align-items:center;
+    gap:25px;
+}
+
+nav {
+    display:flex;
+    gap:20px;
+    font-size:20px;
+}
+
+nav a {
+    color:white;
+    text-decoration:none;
+    font-weight:500;
+}
+
+nav a:hover {
+    text-decoration:underline;
+}
+
+.logout {
+    background:#c62828;
+    color:white;
+    padding:8px 14px;
+    border-radius:6px;
+    font-weight:bold;
+    text-decoration:none;
+    white-space:nowrap;
+}
+
+.logout:hover {
+    background:#b71c1c;
+}
+
+/* BOTON SUBIR PROGRAMACIÓN */
+.subir-programacion {
+    background:#ffa000;
+    color:white;
+    padding:8px 14px;
+    border-radius:6px;
+    font-weight:bold;
+    text-decoration:none;
+}
+
+.subir-programacion:hover {
+    background:#ff8f00;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+
+    <!-- LOGO -->
+    <div class="logo">
+        <img src="{{ url_for('static', filename='Logo.png') }}" alt="Logo">
+    </div>
+
+    <!-- TITULO -->
+    <div class="titulo">
+        <h2 style="margin:0; font-size:30px;">Sistema SAMSA</h2>
+        <div style="font-size:18px;">
+            {% block subtitulo %}{% endblock %}
+        </div>
+    </div>
+
+    <!-- MENÚ -->
+    <div class="menu-derecha">
+        <nav>
+            <a href="/">Inicio</a>
+            <a href="/producciones">Producciones</a>
+            <a href="/pedidos">Pedidos</a>
+            <a href="/solicitudes">Solicitudes</a>
+            <a href="/subir_programacion">Subir Programación</a>
+            
+        </nav>
+
+        <a href="/logout" class="logout">⛔ Cerrar sesión</a>
+    </div>
+
+</header>
+
+<!-- CONTENIDO -->
+{% block content %}{% endblock %}
+
+</body>
+</html>

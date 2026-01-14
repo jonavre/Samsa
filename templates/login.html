@@ -1,0 +1,76 @@
+{% block content %}
+
+<style>
+body{
+  font-family: Arial, sans-serif;
+  background:#f2f4f7;
+  padding:20px;
+}
+
+.login-container{
+  max-width:400px;
+  margin:60px auto;
+  background:white;
+  padding:30px;
+  border-radius:10px;
+  box-shadow:0 4px 10px rgba(0,0,0,0.1);
+}
+
+.login-container h2{
+  text-align:center;
+  margin-bottom:20px;
+}
+
+.login-container input{
+  width:100%;
+  padding:12px;
+  margin-bottom:15px;
+  border:1px solid #ccc;
+  border-radius:5px;
+  font-size:16px;
+}
+
+.login-container button{
+  width:100%;
+  padding:12px;
+  background:#0057b7;
+  color:white;
+  border:none;
+  border-radius:5px;
+  font-size:16px;
+  cursor:pointer;
+}
+
+.login-container button:hover{
+  background:#003f87;
+}
+</style>
+
+<header style="display:flex; justify-content:space-between; align-items:center; background:#0057b7; padding:15px 25px; border-radius:10px; margin-bottom:40px; box-shadow:0 2px 4px rgba(0,0,0,0.1); color:white;">
+    <div style="width:120px; height:120px; border-radius:50%; background:white; display:flex; justify-content:center; align-items:center; overflow:hidden;">
+        <img src="/static/Logo.png" alt="Logo" style="width:90px; height:90px; object-fit:contain;">
+    </div>
+    <div style="text-align:right;">
+        <h2 style="margin:0; font-size:28px; color:white;">Sistema SAMSA</h2>
+        <div style="font-size:16px;">Acceso al sistema</div>
+    </div>
+</header>
+
+<div class="login-container">
+  <h2>Iniciar Sesion</h2>
+
+  <form method="POST">
+    <input type="text" name="nombre" placeholder="Usuario" required>
+    <input type="password" name="password" placeholder="Contraseña" required>
+
+    <button type="submit">Entrar</button>
+  </form>
+
+  {% if error %}
+    <p style="color:red; text-align:center; margin-top:10px;">
+      {{ error }}
+    </p>
+  {% endif %}
+</div>
+
+{% endblock %}
